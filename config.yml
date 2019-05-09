@@ -1,0 +1,10 @@
+seed: 430 # randomness
+
+batch_size: 256
+num_epochs: 100
+
+image_size: 64
+hidden_size: 100
+
+report_freq: 5
+n_show: 5
