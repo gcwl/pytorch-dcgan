@@ -45,7 +45,7 @@ class Gan:
         x_fake = self.g_net(z)
         pred_fake = self.d_net(x_fake)
         # generated images with labels=1, as if they're real images
-        g_loss = self.criterion(pred_fake, self.ones)
+        g_loss = self.criterion(pred_fake.squeeze(), self.ones)
         g_loss.backward()
         self.g_optimizer.step()
         return g_loss.item()
@@ -58,10 +58,10 @@ class Gan:
             x_fake = self.g_net(z)
         pred_fake = self.d_net(x_fake)
         # generated images with labels=0
-        d_loss_fake = self.criterion(pred_fake, self.zeros)
+        d_loss_fake = self.criterion(pred_fake.squeeze(), self.zeros)
         pred_real = self.d_net(x)
         # real images with labels=1
-        d_loss_real = self.criterion(pred_real, self.ones)
+        d_loss_real = self.criterion(pred_real.squeeze(), self.ones)
         d_loss = d_loss_real + d_loss_fake
         d_loss.backward()
         self.d_optimizer.step()
