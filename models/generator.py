@@ -3,12 +3,22 @@ from .utils import compose
 
 
 class Upsample(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride, padding, activation=None):
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel_size,
+        stride,
+        padding,
+        batch_norm=True,
+        activation=None,
+    ):
         super().__init__()
         self.ct = nn.ConvTranspose2d(
             in_channels, out_channels, kernel_size, stride, padding, bias=False
         )
-        self.bn = nn.BatchNorm2d(out_channels)
+        if batch_norm:
+            self.bn = nn.BatchNorm2d(out_channels)
         self.act = activation() if activation is not None else nn.ReLU(inplace=True)
 
     def forward(self, x):

@@ -3,10 +3,20 @@ from .utils import compose
 
 
 class Downsample(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size, stride, padding, activation=None):
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel_size,
+        stride,
+        padding,
+        batch_norm=True,
+        activation=None,
+    ):
         super().__init__()
         self.conv = nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding, bias=False)
-        self.bn = nn.BatchNorm2d(out_channels)
+        if batch_norm:
+            self.bn = nn.BatchNorm2d(out_channels)
         self.act = activation() if activation is not None else nn.LeakyReLU(0.2, inplace=True)
 
     def forward(self, x):
@@ -16,7 +26,7 @@ class Downsample(nn.Module):
 class Discriminator(nn.Module):
     def __init__(self, image_size):
         super().__init__()
-        self.dn_1 = Downsample(3, image_size, 4, 2, 1)
+        self.dn_1 = Downsample(3, image_size, 4, 2, 1, batch_norm=False)
         self.dn_2 = Downsample(image_size, image_size * 2, 4, 2, 1)
         self.dn_3 = Downsample(image_size * 2, image_size * 4, 4, 2, 1)
         self.dn_4 = Downsample(image_size * 4, image_size * 8, 4, 2, 1)
