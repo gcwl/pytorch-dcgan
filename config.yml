@@ -3,7 +3,8 @@ seed: 430 # randomness
 batch_size: 256
 num_epochs: 100
 
-image_size: 64
+image_size: 32
+channel_size: 64
 hidden_size: 100
 
 report_freq: 5

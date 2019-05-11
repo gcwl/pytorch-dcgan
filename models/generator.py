@@ -25,13 +25,13 @@ class Upsample(nn.Module):
 
 
 class Generator(nn.Module):
-    def __init__(self, hidden_size, image_size):
+    def __init__(self, hidden_size, channel_size):
         super().__init__()
-        self.up_1 = Upsample(hidden_size, image_size * 8, 4, 1, 0)
-        self.up_2 = Upsample(image_size * 8, image_size * 4, 4, 2, 1)
-        self.up_3 = Upsample(image_size * 4, image_size * 2, 4, 2, 1)
-        self.up_4 = Upsample(image_size * 2, image_size, 4, 2, 1)
-        self.ct = nn.ConvTranspose2d(image_size, 3, 4, 2, 1, bias=False)
+        self.up_1 = Upsample(hidden_size, channel_size * 8, 4, 1, 0)
+        self.up_2 = Upsample(channel_size * 8, channel_size * 4, 4, 2, 1)
+        self.up_3 = Upsample(channel_size * 4, channel_size * 2, 4, 2, 1)
+        self.up_4 = Upsample(channel_size * 2, channel_size, 4, 2, 1)
+        self.ct = nn.ConvTranspose2d(channel_size, 3, 4, 2, 1, bias=False)
         self.act = nn.Tanh()
 
     def forward(self, x):
