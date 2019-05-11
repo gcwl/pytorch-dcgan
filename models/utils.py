@@ -12,6 +12,8 @@ def to_timedict(unix_time, frac_secs=False):
 def compose(*funcs):
     def g(x):
         for f in funcs:
+            if f is None:
+                continue
             x = f(x)
         return x
 
