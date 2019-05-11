@@ -15,8 +15,7 @@ class Downsample(nn.Module):
     ):
         super().__init__()
         self.conv = nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding, bias=False)
-        if batch_norm:
-            self.bn = nn.BatchNorm2d(out_channels)
+        self.bn = nn.BatchNorm2d(out_channels) if batch_norm else None
         self.act = activation() if activation is not None else nn.LeakyReLU(0.2, inplace=True)
 
     def forward(self, x):
