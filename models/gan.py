@@ -25,7 +25,7 @@ class Gan:
         self.ones = torch.ones(config.batch_size).to(self.device)
         self.zeros = torch.zeros(config.batch_size).to(self.device)
         self.fixed_z = (
-            torch.rand(config.n_show * config.n_show, config.hidden_size, 1, 1)
+            torch.rand(config.n_show * config.n_show, config.hidden_size)
             .uniform_(-1, 1)
             .to(self.device)
         )
@@ -33,7 +33,7 @@ class Gan:
     def train_g(self, x):
         self.g_net.zero_grad()
         z = (
-            torch.rand(self.config.batch_size, self.config.hidden_size, 1, 1)
+            torch.rand(self.config.batch_size, self.config.hidden_size)
             .uniform_(-1, 1)
             .to(self.device)
         )
@@ -48,7 +48,7 @@ class Gan:
     def train_d(self, x):
         self.d_net.zero_grad()
         z = (
-            torch.rand(self.config.batch_size, self.config.hidden_size, 1, 1)
+            torch.rand(self.config.batch_size, self.config.hidden_size)
             .uniform_(-1, 1)
             .to(self.device)
         )
@@ -101,9 +101,12 @@ class Gan:
         generated_images = generated_images.reshape(
             -1, 3, self.config.image_size, self.config.image_size
         ).cpu()
+        # rescale images from (-1, 1) to (0, 255)
+        generated_images = (255 * (generated_images + 1) / 2).byte()
         grid = torchvision.utils.make_grid(generated_images, nrow=self.config.n_show)
         grid = grid.permute(1, 2, 0)
-        plt.imshow(grid)
+        fig, ax = plt.subplots(figsize=(10, 10))
+        im = ax.imshow(grid)
         plt.show()
 
     def checkpoint(self):

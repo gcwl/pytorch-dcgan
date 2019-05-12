@@ -35,7 +35,7 @@ def main():
 
     dataloader = DataLoader(dataset, batch_size=CONFIG.batch_size, shuffle=True, drop_last=True)
 
-    G = Generator(CONFIG.hidden_size, CONFIG.channel_size).to(DEVICE)
+    G = Generator(CONFIG.image_size, CONFIG.hidden_size, CONFIG.channel_size).to(DEVICE)
     D = Discriminator(CONFIG.image_size, CONFIG.channel_size).to(DEVICE)
     gan = Gan(CONFIG, dataloader, G, D, DEVICE)
 
