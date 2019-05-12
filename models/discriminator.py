@@ -41,8 +41,8 @@ class Discriminator(nn.Module):
         # size = (batch_size, channel_size*4, image_size/8, image_size/8)
         self.dn_4 = Downsample(channel_size * 4, channel_size * 8, 4, 2, 1)
         # size = (batch_size, channel_size*8, image_size/16, image_size/16)
-        self.fc_in = channel_size * 8 * (image_size // 16) * (image_size // 16)
-        self.fc = nn.Linear(self.fc_in, 1)
+        self.fc_in_features = channel_size * 8 * (image_size // 16) * (image_size // 16)
+        self.fc = nn.Linear(self.fc_in_features, 1)
         # no batchnorm at linear layer
         self.act = nn.Sigmoid()
         # initialize model weights
@@ -50,10 +50,12 @@ class Discriminator(nn.Module):
 
     def forward(self, x):
         x = compose(self.dn_1, self.dn_2, self.dn_3, self.dn_4)(x)
-        x = x.view(-1, self.fc_in)
+        x = x.view(-1, self.fc_in_features)
         return self.act(self.fc(x))
 
 
+# Discriminator(64, 128)
+#
 # Discriminator(
 #   (dn_1): Downsample(
 #     (conv): Conv2d(3, 128, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1))
