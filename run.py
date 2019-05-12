@@ -5,6 +5,7 @@ def main():
 
     import torch
     from torch.utils.data import DataLoader
+    import torchvision
     from torchvision.transforms import Compose, ToTensor, Normalize, Resize
     from torchvision import datasets
 
