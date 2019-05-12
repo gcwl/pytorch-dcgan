@@ -35,13 +35,19 @@ class Gan:
         # dummies
         self.ones = torch.ones(config.batch_size).to(self.device)
         self.zeros = torch.zeros(config.batch_size).to(self.device)
-        self.fixed_z = torch.randn(config.n_show * config.n_show, config.hidden_size, 1, 1).to(
-            self.device
+        self.fixed_z = (
+            torch.rand(config.n_show * config.n_show, config.hidden_size, 1, 1)
+            .uniform_(-1, 1)
+            .to(self.device)
         )
 
     def train_g(self, x):
         self.g_net.zero_grad()
-        z = torch.randn(self.config.batch_size, self.config.hidden_size, 1, 1).to(self.device)
+        z = (
+            torch.rand(self.config.batch_size, self.config.hidden_size, 1, 1)
+            .uniform_(-1, 1)
+            .to(self.device)
+        )
         x_fake = self.g_net(z)
         pred_fake = self.d_net(x_fake)
         # generated images with labels=1, as if they're real images
@@ -52,7 +58,11 @@ class Gan:
 
     def train_d(self, x):
         self.d_net.zero_grad()
-        z = torch.randn(self.config.batch_size, self.config.hidden_size, 1, 1).to(self.device)
+        z = (
+            torch.rand(self.config.batch_size, self.config.hidden_size, 1, 1)
+            .uniform_(-1, 1)
+            .to(self.device)
+        )
         with torch.no_grad():
             # avoid building computation graph for G, i.e. x_fake has no grad
             x_fake = self.g_net(z)
