@@ -14,10 +14,14 @@ class Upsample(nn.Module):
         activation=None,
     ):
         super().__init__()
+        if batch_norm:
         self.ct = nn.ConvTranspose2d(
             in_channels, out_channels, kernel_size, stride, padding, bias=False
         )
-        self.bn = nn.BatchNorm2d(out_channels) if batch_norm else None
+            self.bn = nn.BatchNorm2d(out_channels)
+        else:
+            self.ct = nn.ConvTranspose2d(in_channels, out_channels, kernel_size, stride, padding)
+            self.bn = None
         self.act = activation() if activation is not None else nn.ReLU(inplace=True)
 
     def forward(self, x):
