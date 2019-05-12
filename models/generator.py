@@ -1,5 +1,6 @@
+import torch
 import torch.nn as nn
-from .utils import compose
+from .utils import compose, weights_init
 
 
 class Upsample(nn.Module):
@@ -15,9 +16,9 @@ class Upsample(nn.Module):
     ):
         super().__init__()
         if batch_norm:
-        self.ct = nn.ConvTranspose2d(
-            in_channels, out_channels, kernel_size, stride, padding, bias=False
-        )
+            self.ct = nn.ConvTranspose2d(
+                in_channels, out_channels, kernel_size, stride, padding, bias=False
+            )
             self.bn = nn.BatchNorm2d(out_channels)
         else:
             self.ct = nn.ConvTranspose2d(in_channels, out_channels, kernel_size, stride, padding)
@@ -29,14 +30,15 @@ class Upsample(nn.Module):
 
 
 class Generator(nn.Module):
-    def __init__(self, hidden_size, channel_size):
+    def __init__(self, hidden_size, channel_size, init_weights=None):
         super().__init__()
         self.up_1 = Upsample(hidden_size, channel_size * 8, 4, 1, 0)
         self.up_2 = Upsample(channel_size * 8, channel_size * 4, 4, 2, 1)
         self.up_3 = Upsample(channel_size * 4, channel_size * 2, 4, 2, 1)
         self.up_4 = Upsample(channel_size * 2, channel_size, 4, 2, 1)
-        self.ct = nn.ConvTranspose2d(channel_size, 3, 4, 2, 1, bias=False)
-        self.act = nn.Tanh()
+        self.up_5 = Upsample(channel_size, 3, 4, 2, 1, batch_norm=False, activation=nn.Tanh)
+        # initialize model weights
+        self.apply(init_weights or weights_init)
 
     def forward(self, x):
-        return compose(self.up_1, self.up_2, self.up_3, self.up_4, self.ct, self.act)(x)
+        return compose(self.up_1, self.up_2, self.up_3, self.up_4, self.up_5)(x)

@@ -9,14 +9,6 @@ from matplotlib import pyplot as plt
 from .utils import to_timedict
 
 
-def weights_init(m):
-    if isinstance(m, nn.BatchNorm2d):
-        m.weight.data.normal_(1.0, 0.02)
-        m.bias.data.fill_(0)
-    elif isinstance(m, (nn.Conv2d, nn.ConvTranspose2d)):
-        m.weight.data.normal_(0.0, 0.02)
-
-
 class Gan:
     def __init__(self, config, dataloader, generator, discriminator, device=None):
         self.config = config
@@ -24,9 +16,6 @@ class Gan:
         self.device = torch.device(device or ("cuda" if torch.cuda.is_available() else "cpu"))
         self.g_net = generator.to(self.device)
         self.d_net = discriminator.to(self.device)
-        # init model weights
-        self.g_net.apply(weights_init)
-        self.d_net.apply(weights_init)
         # optimizers
         self.g_optimizer = optim.Adam(self.g_net.parameters(), lr=0.0002, betas=(0.5, 0.999))
         self.d_optimizer = optim.Adam(self.d_net.parameters(), lr=0.0002, betas=(0.5, 0.999))

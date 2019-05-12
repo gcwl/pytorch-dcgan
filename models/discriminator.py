@@ -1,5 +1,6 @@
+import torch
 import torch.nn as nn
-from .utils import compose
+from .utils import compose, weights_init
 
 
 class Downsample(nn.Module):
@@ -29,7 +30,7 @@ class Downsample(nn.Module):
 
 
 class Discriminator(nn.Module):
-    def __init__(self, image_size, channel_size):
+    def __init__(self, image_size, channel_size, init_weights=None):
         super().__init__()
         # no batchnorm at first layer
         self.dn_1 = Downsample(3, channel_size, 4, 2, 1, batch_norm=False)
@@ -44,8 +45,35 @@ class Discriminator(nn.Module):
         self.fc = nn.Linear(self.fc_in, 1)
         # no batchnorm at linear layer
         self.act = nn.Sigmoid()
+        # initialize model weights
+        self.apply(init_weights or weights_init)
 
     def forward(self, x):
         x = compose(self.dn_1, self.dn_2, self.dn_3, self.dn_4)(x)
         x = x.view(-1, self.fc_in)
         return self.act(self.fc(x))
+
+
+# Discriminator(
+#   (dn_1): Downsample(
+#     (conv): Conv2d(3, 128, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1))
+#     (act): LeakyReLU(negative_slope=0.2, inplace)
+#   )
+#   (dn_2): Downsample(
+#     (conv): Conv2d(128, 256, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+#     (bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+#     (act): LeakyReLU(negative_slope=0.2, inplace)
+#   )
+#   (dn_3): Downsample(
+#     (conv): Conv2d(256, 512, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+#     (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+#     (act): LeakyReLU(negative_slope=0.2, inplace)
+#   )
+#   (dn_4): Downsample(
+#     (conv): Conv2d(512, 1024, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+#     (bn): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+#     (act): LeakyReLU(negative_slope=0.2, inplace)
+#   )
+#   (fc): Linear(in_features=16384, out_features=1, bias=True)
+#   (act): Sigmoid()
+# )
