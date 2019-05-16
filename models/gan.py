@@ -91,7 +91,7 @@ class Gan:
 
     def report(self, epoch, start_time, end_time, d_loss, g_loss):
         t = to_timedict(end_time - start_time)
-        msg = "| epoch: {:03} | d_loss: {:.03f} | g_loss: {:.03f} | elapsed: {}m {}s".format(
+        msg = "epoch: {:03} | d_loss: {:.03f} | g_loss: {:.03f} | elapsed: {}m {}s".format(
             epoch, d_loss, g_loss, t["mins"], t["secs"]
         )
         print(msg)
