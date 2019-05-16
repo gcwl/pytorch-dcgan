@@ -69,16 +69,16 @@ class Gan:
     def train_one_epoch(self):
         d_losses = []
         g_losses = []
-        weights = []
+        batch_sizes = []
         for (x, _) in tqdm(self.dataloader):
             if x.size(0) != self.config.batch_size:
                 continue
             x = x.to(self.device)
             d_losses.append(self.train_d(x))
             g_losses.append(self.train_g(x))
-            weights.append(len(x))
-        d_loss = np.average(d_losses, weights=weights)
-        g_loss = np.average(g_losses, weights=weights)
+            batch_sizes.append(x.size(0))
+        d_loss = np.average(d_losses, weights=batch_sizes)
+        g_loss = np.average(g_losses, weights=batch_sizes)
         return d_loss, g_loss
 
     def train(self):
