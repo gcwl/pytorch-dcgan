@@ -35,7 +35,7 @@ class Generator(nn.Module):
         self.nc = channel_size * 8
         self.nh = image_size // 16
         self.nw = image_size // 16
-        self.fc = nn.Linear(hidden_size, self.nc * self.nh * self.nw)
+        self.affine = nn.Linear(hidden_size, self.nc * self.nh * self.nw)
         # size = (batch_size, channel_size*8, image_size/16, image_size/16)
         self.up_1 = Upsample(channel_size * 8, channel_size * 4, 4, 2, 1)
         # size = (batch_size, channel_size*4, image_size/8, image_size/8)
@@ -49,7 +49,7 @@ class Generator(nn.Module):
         self.apply(init_weights or weights_init)
 
     def forward(self, x):
-        x = self.fc(x)
+        x = self.affine(x)
         x = x.view(-1, self.nc, self.nh, self.nw)
         return compose(self.up_1, self.up_2, self.up_3, self.up_4)(x)
 
